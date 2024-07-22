@@ -11,11 +11,11 @@ const createUser = async (userData) => {
 };
 
 const getAllUsers = async () => {
-    return User.find().populate('roleId');
+    return User.find()
 };
 
 const getUserById = async (id) => {
-    return User.findById(id).populate('roleId');
+    return User.findById(id)
 };
 
 const updateUser = async (id, userData) => {

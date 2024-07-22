@@ -11,17 +11,23 @@ const responseRoutes = require('./Routes/Response.routes');
 const certificateRoutes = require('./Routes/Certification.routes');
 const authRoutes = require('./Routes/Auth.routes.js');
 const { authenticateToken } = require('./middlewares/auth.middlewares.js');
+const multer = require('multer');
+const path = require('path');
+const { fileURLToPath } = require('url');
 
+const dirname = path.dirname(__filename)
 const app = express();
 const port = process.env.PORT || 3000;
-
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+
+app.use('/certificados', express.static(path.join(__dirname, 'certificados')));
+app.use('/imagenes', express.static(path.join(__dirname, 'imagenes')));
 app.use(authRoutes);
-app.use(authenticateToken);
-app.use(roleRoutes);
 app.use(userRoutes);
+app.use(roleRoutes);
 app.use(surveyRoutes);
 app.use(participationRoutes);
 app.use(questionRoutes);

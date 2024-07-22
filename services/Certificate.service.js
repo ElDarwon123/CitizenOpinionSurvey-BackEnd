@@ -6,7 +6,7 @@ const createCertificate = async (certificateData) => {
 };
 
 const getAllCertificates = async () => {
-    return Certificate.find().populate('_Participation');
+    return Certificate.find()
 };
 
 const getCertificateById = async (id) => {

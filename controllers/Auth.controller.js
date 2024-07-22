@@ -6,6 +6,7 @@ const login = async (req, res) => {
 
     try {
         const { token, user } = await authService.login(username, password);
+        res.cookie('token', token)
         res.json({ token, user });
     } catch (error) {
         res.status(401).json({ message: error.message });

@@ -1,29 +1,31 @@
-const jwt = require('jsonwebtoken')
-const tokenService = require('../services/Token.service')
+const jwt = require('jsonwebtoken');
+const User = require('../models/User.model'); 
 
-const authenticateToken = async (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
+const authenticateJWT = (req, res, next) => {
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+    
     if (!token) {
-        return res.sendStatus(401)
+        return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
 
-    const isRevoked = await tokenService.isTokenRemoved(token)
-
-    if (isRevoked) {
-        res.sendStatus(403)
-    }
-
-    jwt.verify(token, process.env.JWTSECRET, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
         if (err) {
-            return res.sendStatus(403)
+            return res.status(403).json({ error: 'Invalid token.' });
         }
-        req.user = user
-        next()
-    })
-}
 
-module.exports = {
-    authenticateToken
-}
+
+        try {
+            const dbUser = await User.findById(user.id);
+            if (!dbUser) {
+                return res.status(401).json({ error: 'User not found.' });
+            }
+
+            req.user = dbUser; 
+            next();
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error.' });
+        }
+    });
+};
+
+module.exports = authenticateJWT;

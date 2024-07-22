@@ -1,3 +1,4 @@
+const Question = require('../models/Question.model');
 const questionService = require('../services/Question.service');
 
 const createQuestion = async (req, res) => {
@@ -11,7 +12,7 @@ const createQuestion = async (req, res) => {
 
 const getAllQuestions = async (req, res) => {
     try {
-        const questions = await questionService.getAllQuestions();
+        const questions = await Question.find();
         res.status(200).json(questions);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -27,16 +28,14 @@ const getQuestionById = async (req, res) => {
     }
 };
 
-const getQuestionBySurvey = async (req, res) => {
+const getQuestionsBySurvey = async (req, res) => {
     try {
-        
-        const questions = await questionService.getQuestionBySurvey(req.params.surveyId)
-        res.status(200).json(questions)
-
+        const questions = await questionService.getQuestionsBySurvey(req.params.surveyId);
+        res.status(200).json(questions);
     } catch (error) {
-        res.status(400).json({ message: error.message })
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 const updateQuestion = async (req, res) => {
     try {
@@ -60,7 +59,7 @@ module.exports = {
     createQuestion,
     getAllQuestions,
     getQuestionById,
-    getQuestionBySurvey,
+    getQuestionsBySurvey,
     updateQuestion,
     deleteQuestion
 };
